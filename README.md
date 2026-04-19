@@ -79,7 +79,7 @@ son
 
 
 
-### 🔹 Live Dashboard (AppSheet UI)
+### Live Dashboard (AppSheet UI)
 
 * Real-time stadium status
 * Visual crowd indicators (🔴 🟡 🟢)
