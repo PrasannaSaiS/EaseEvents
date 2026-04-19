@@ -1,0 +1,32 @@
+{
+  "name": "easeevents",
+  "version": "2.0.0",
+  "description": "EaseEvents — Real-time Crowd Intelligence Backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "googleapis": "^140.0.0"
+  },
+  "keywords": [
+    "crowd-management",
+    "events",
+    "backend",
+    "cloud-run"
+  ],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrasannaSaiS/EaseEvents.git"
+  }
+}
