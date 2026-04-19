@@ -1,9 +1,7 @@
 require("dotenv").config();
 
-// ============================================================
-//  EaseEvents � Real-time Crowd Intelligence Backend v3
+//  EaseEvents- Real-time Crowd Intelligence Backend v3
 //  Smart source/destination parsing | Zone-aware routing
-// ============================================================
 
 const express = require("express");
 const cors = require("cors");
@@ -14,9 +12,9 @@ const app = express();
 app.use(cors());
 app.use(bp.json());
 
-// ============================================================
-//  GOOGLE SHEETS AUTH
-// ============================================================
+
+//GOOGLE SHEETS AUTH
+
 let sheets;
 try {
     const raw = process.env.GOOGLE_CREDENTIALS || "null";
@@ -38,10 +36,10 @@ try {
 const SPREADSHEET_ID =
     process.env.SPREADSHEET_ID || "1mwr8L384mevt6B6zTCrsXUVafOMbYTqGupSQMEVd2uw";
 
-// ============================================================
-//  ZONE REGISTRY
-//  Each entry: canonical name, aliases, sheet row, alternatives
-// ============================================================
+
+// ZONE REGISTRY
+// Each entry: canonical name, aliases, sheet row, alternatives
+
 const ZONES = [
     {
         name: "South Gate",
