@@ -1,0 +1,12 @@
+node_modules
+__tests__
+coverage
+.git
+.gitignore
+.env
+.env.*
+.eslintrc.json
+*.md
+service-account.json
+*.pem
+*.key

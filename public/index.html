@@ -3,92 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="EaseEvents API Backend Status Dashboard">
-    <title>EaseEvents Backend Status</title>
-    <style>
-        :root {
-            --bg-color: #0d1117;
-            --text-color: #c9d1d9;
-            --primary-color: #58a6ff;
-            --border-color: #30363d;
-            --success-color: #238636;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 2rem;
-            line-height: 1.5;
-        }
-        main {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        h1 {
-            color: var(--primary-color);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
-        }
-        section {
-            background-color: #161b22;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            background-color: var(--success-color);
-            border-radius: 50%;
-            margin-right: 0.5rem;
-        }
-        a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-        a:hover, a:focus {
-            text-decoration: underline;
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-        footer {
-            margin-top: 3rem;
-            text-align: center;
-            font-size: 0.875rem;
-            color: #8b949e;
-        }
-    </style>
+    <meta name="description" content="EaseEvents — Real-time Crowd Intelligence Backend. Monitor service health, zones, and API endpoints.">
+    <meta name="theme-color" content="#0d1117">
+    <title>EaseEvents — Crowd Intelligence Dashboard</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <main aria-label="Main content">
-        <header>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <main id="main-content" role="main" aria-label="Dashboard main content">
+        <header class="page-header">
             <h1>EaseEvents API Backend</h1>
-            <p aria-live="polite">
-                <span class="status-indicator" aria-hidden="true"></span>
+            <p class="status-badge" aria-live="polite">
+                <span class="status-dot" role="img" aria-label="Online status indicator"></span>
                 <strong>Status:</strong> Service is online and operational.
+                Uptime: <span id="live-uptime" aria-label="Server uptime">loading...</span>
             </p>
         </header>
 
-        <section aria-labelledby="endpoints-heading">
+        <section class="card" aria-labelledby="endpoints-heading">
             <h2 id="endpoints-heading">Available Endpoints</h2>
-            <ul>
-                <li><strong>GET <a href="/status" aria-label="View API status endpoint">/status</a></strong>: Retrieves detailed service health, uptime, and zone information.</li>
-                <li><strong>POST /process-command</strong>: Core endpoint to process natural language crowd management commands.</li>
-            </ul>
+            <nav aria-label="API endpoint navigation">
+                <ul>
+                    <li>
+                        <strong><code>GET</code> <a href="/status" aria-label="View API status endpoint">/status</a></strong>
+                        — Service health, uptime, and zone listing.
+                    </li>
+                    <li>
+                        <strong><code>GET</code> <a href="/health" aria-label="View health check endpoint">/health</a></strong>
+                        — Lightweight health check for load balancers.
+                    </li>
+                    <li>
+                        <strong><code>POST</code> /process-command</strong>
+                        — Process natural language crowd management commands.
+                    </li>
+                </ul>
+            </nav>
         </section>
 
-        <section aria-labelledby="info-heading">
+        <section class="card" aria-labelledby="zones-heading">
+            <h2 id="zones-heading">Monitored Zones</h2>
+            <table class="zone-table" aria-label="List of monitored venue zones">
+                <caption>All venue zones tracked by the crowd intelligence engine</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Zone Name</th>
+                        <th scope="col">Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>South Gate</td><td>Entry / Exit</td></tr>
+                    <tr><td>2</td><td>North Gate</td><td>Entry / Exit</td></tr>
+                    <tr><td>3</td><td>Food Court A</td><td>Amenity</td></tr>
+                    <tr><td>4</td><td>Food Court B</td><td>Amenity</td></tr>
+                    <tr><td>5</td><td>East Gate</td><td>Entry / Exit</td></tr>
+                    <tr><td>6</td><td>West Gate</td><td>Entry / Exit</td></tr>
+                    <tr><td>7</td><td>Main Stage</td><td>Venue</td></tr>
+                    <tr><td>8</td><td>Restroom</td><td>Facility</td></tr>
+                    <tr><td>9</td><td>Parking</td><td>Facility</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card" aria-labelledby="info-heading">
             <h2 id="info-heading">System Information</h2>
-            <p>This backend supports the EaseEvents platform, parsing real-time crowd instructions and intelligently routing traffic to balance load across venues.</p>
-        </p>
+            <p>
+                This backend powers the EaseEvents platform — parsing real-time crowd instructions
+                and intelligently routing traffic to balance load across venue zones. Built on
+                Google Cloud Run with Google Sheets as the live data layer.
+            </p>
+        </section>
     </main>
 
-    <footer aria-label="Footer">
+    <footer role="contentinfo" aria-label="Page footer">
         <p>&copy; 2026 EaseEvents. All rights reserved.</p>
     </footer>
+
+    <script>
+        (function() {
+            "use strict";
+            var uptimeEl = document.getElementById("live-uptime");
+            function fetchUptime() {
+                fetch("/health")
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) {
+                        var s = d.uptime || 0;
+                        var h = Math.floor(s / 3600);
+                        var m = Math.floor((s % 3600) / 60);
+                        uptimeEl.textContent = h + "h " + m + "m";
+                    })
+                    .catch(function() {
+                        uptimeEl.textContent = "unavailable";
+                    });
+            }
+            fetchUptime();
+            setInterval(fetchUptime, 30000);
+        })();
+    </script>
 </body>
 </html>
