@@ -5,17 +5,23 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "jest",
+    "lint": "eslint ."
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
+    "@google-cloud/logging": "^11.2.1",
     "body-parser": "^1.20.2",
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^4.18.2",
-    "googleapis": "^140.0.0"
+    "express-rate-limit": "^8.3.2",
+    "googleapis": "^140.0.0",
+    "helmet": "^8.1.0"
   },
   "keywords": [
     "crowd-management",
@@ -28,5 +34,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PrasannaSaiS/EaseEvents.git"
+  },
+  "devDependencies": {
+    "eslint": "^10.2.1",
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
   }
 }

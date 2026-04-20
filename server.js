@@ -7,10 +7,32 @@ const express = require("express");
 const cors = require("cors");
 const bp = require("body-parser");
 const { google } = require("googleapis");
+const helmet = require("helmet");
+const compression = require("compression");
+const rateLimit = require("express-rate-limit");
+const { Logging } = require("@google-cloud/logging");
+const path = require("path");
 
 const app = express();
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"]
+        }
+    }
+}));
+app.use(compression());
 app.use(cors());
 app.use(bp.json());
+app.use(express.static(path.join(__dirname, "public")));
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: { error: "Too many requests, please try again later." }
+});
 
 
 //GOOGLE SHEETS AUTH
@@ -35,6 +57,18 @@ try {
 
 const SPREADSHEET_ID =
     process.env.SPREADSHEET_ID || "1mwr8L384mevt6B6zTCrsXUVafOMbYTqGupSQMEVd2uw";
+
+let gcLogging = null;
+try {
+    const raw = process.env.GOOGLE_CREDENTIALS || "null";
+    const credentials = JSON.parse(raw);
+    if (credentials && credentials.project_id) {
+        gcLogging = new Logging({ credentials });
+        console.log("✅ Google Cloud Logging OK");
+    }
+} catch (err) {
+    console.warn("⚠️ Google Cloud Logging skipped:", err.message);
+}
 
 
 // ZONE REGISTRY
@@ -141,6 +175,11 @@ const ALERT_SIGNALS = ["alert", "warn", "notify", "announce"];
 // 2. Everything before the redirect keyword is the SOURCE region
 // 3. Crowd level is detected from the SOURCE part of the sentence
 
+/**
+ * Extracts intent from natural language command to identify source, destination, and crowd level.
+ * @param {string} command - Natural language instruction
+ * @returns {Object} Extracted intent including sourceZone, destZone, crowdLevel, and actions
+ */
 function extractIntent(command) {
     const cmd = command.toLowerCase();
 
@@ -211,6 +250,11 @@ function scoreConfidence(intent) {
 }
 
 // DECISION BUILDER    
+/**
+ * Builds routing decision based on extracted intent.
+ * @param {Object} intent - The extracted intent
+ * @returns {Object} Routing decision including wait time, route, and alert message
+ */
 function buildDecision(intent) {
     const { sourceZone, destZone, crowdLevel, actions } = intent;
 
@@ -268,6 +312,12 @@ function buildDecision(intent) {
 }
 
 //REASONING GENERATOR
+/**
+ * Generates human-readable reasoning for the routing decision.
+ * @param {Object} intent - The parsed command intent
+ * @param {Object} decision - The resulting routing decision
+ * @returns {string} Text explaining why the decision was made
+ */
 function generateReasoning(intent, decision) {
     const src = intent.sourceZone ? intent.sourceZone.name : "the zone";
     const dst = decision.route !== "No change" ? decision.route : null;
@@ -336,6 +386,17 @@ async function updateSheet(decision, range) {
 }
 
 async function logCommand(command, intent, decision, confidence, reasoning) {
+    if (gcLogging) {
+        try {
+            const log = gcLogging.log('easeevents-commands');
+            const metadata = { resource: { type: 'global' } };
+            const entry = log.entry(metadata, { command, intent: { source: intent.sourceZone ? intent.sourceZone.name : null }, decision, confidence, reasoning });
+            await log.write(entry);
+        } catch (e) {
+            console.warn("GCP Logging error:", e.message);
+        }
+    }
+
     if (!sheets) return;
 
     await sheets.spreadsheets.values.append({
@@ -380,7 +441,7 @@ async function updateAlerts(decision) {
 }
 
 //ROUTES
-app.get("/", (req, res) => res.send("EaseEvents Backend Running"));
+//ROUTES
 
 app.get("/status", (req, res) => {
     res.json({
@@ -393,7 +454,7 @@ app.get("/status", (req, res) => {
     });
 });
 
-app.post("/process-command", async (req, res) => {
+app.post("/process-command", limiter, async (req, res) => {
     const { command } = req.body || {};
 
     if (!command || typeof command !== "string" || !command.trim()) {
@@ -436,7 +497,11 @@ app.post("/process-command", async (req, res) => {
 });
 
 //SERVER
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`??  EaseEvents backend v3.0.0 running on port ${PORT}`);
-});
+if (require.main === module) {
+    const PORT = process.env.PORT || 8080;
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`??  EaseEvents backend v3.0.0 running on port ${PORT}`);
+    });
+}
+
+module.exports = app;

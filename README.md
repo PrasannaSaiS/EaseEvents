@@ -86,6 +86,16 @@ son
 * Auto-updating alerts feed
 
 
+To ensure **high performance, security, and maintainability**, EaseEvents incorporates modern production standards:
+
+* **Security**: `helmet` for secure HTTP headers (OWASP protection) and `express-rate-limit` to prevent brute-force/DoS attacks.
+* **Efficiency**: `compression` middleware to gzip responses, significantly reducing payload size and improving API latency.
+* **Google Services**: Deep integration with `@google-cloud/logging` for robust, structured backend logging, alongside the primary Google Sheets API data layer.
+* **Testing**: Comprehensive automated API testing using **Jest** and **Supertest** covering core intelligence logic and edge cases.
+* **Accessibility**: A fully semantic, ARIA-compliant HTML web dashboard (`public/index.html`) serving as an accessible backend health monitor.
+* **Code Quality**: Enforced via **ESLint** and detailed **JSDoc** documentation for core AI logic.
+
+
 ## System Architecture
 
 AppSheet UI (User / Admin)
@@ -230,11 +240,13 @@ Acts as a **real-time system database**:
 
 ## Tech Stack
 
-* **Backend**: Node.js, Express
-* **Cloud**: Google Cloud Run
-* **Data**: Google Sheets API
-* **Frontend**: AppSheet
-* **Automation**: AppSheet Bots (Webhook)
+* **Backend Framework**: Node.js, Express
+* **Security & Optimization**: Helmet, Express-Rate-Limit, Compression
+* **Cloud & Infrastructure**: Google Cloud Run, Google Cloud Logging
+* **Data Layer**: Google Sheets API v4
+* **Testing & Quality**: Jest, Supertest, ESLint
+* **Frontend UI**: AppSheet
+* **Automation**: AppSheet Bots (Webhooks)
 
 
 ## Impact

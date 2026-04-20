@@ -15,6 +15,7 @@ RUN npm install --omit=dev
 
 # Copy source code
 COPY server.js ./
+COPY public ./public
 
 # Cloud Run expects port 8080
 EXPOSE 8080
