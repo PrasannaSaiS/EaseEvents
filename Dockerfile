@@ -21,6 +21,7 @@ COPY server.js ./
 COPY config ./config
 COPY lib ./lib
 COPY public ./public
+COPY .env ./
 
 # Create non-root user for security
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
