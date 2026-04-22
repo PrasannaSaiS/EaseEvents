@@ -9,6 +9,7 @@ EaseEvents is an AI-powered system designed to **optimize crowd movement, reduce
 
 Unlike traditional monitoring systems, EaseEvents introduces a **proactive, decision-driven approach** — where natural language commands are converted into intelligent, actionable insights that dynamically guide crowd flow across the venue.
 
+Access AppSheet: https://www.appsheet.com/start/0d713229-0f8f-4dbd-8dc0-ccd749733a05
 
 ## Problem Statement
 
